@@ -2,6 +2,7 @@ global	strlen
 global	strcmp
 global	strncmp
 global	strrev
+global	strstr
 global	atoi
 global	itoa
 global	uitoa
@@ -49,12 +50,14 @@ strcmp:
 ; --- STRNCMP (char *s1, char *s2, int n) ---
 
 strncmp:
+	xor	rax, rax
+	xor	rcx, rcx
 
-.loop:	mov	al, byte [rdi]		; load character from s1
-	mov	cl, byte [rsi]		; load character from s2
-	
-	cmp	rdx, 0			; check if n is 0
+.loop:	cmp	rdx, 0			; check if n is 0
 	je	.end
+
+	mov	al, byte [rdi]		; load character from s1
+	mov	cl, byte [rsi]		; load character from s2	
 
 	cmp	al, 0			; check for string terminator
 	je	.end			; break loop if end of string
@@ -72,6 +75,52 @@ strncmp:
 
 	ret
 
+
+; --- STRSTR (char *haystack, char *needle) ---
+
+section	.bss
+needle_len:	resq	1
+needle_ptr:	resq	1
+haystack_ptr:	resq	1
+
+section	.text
+strstr:	push	rbx			; preserve rbx
+
+	mov	[needle_ptr], rsi	; store needle ptr in memory
+	mov	[haystack_ptr], rdi	; store haystack in memory
+
+	mov	rdi, rsi		; load needle ptr to rdi
+	call	strlen
+	mov	[needle_len], rax	; store needle length
+
+	mov	rbx, 0			; init counter
+	xor	rdi, rdi
+
+.loop:	mov	rdi, [haystack_ptr]
+	mov	rsi, [needle_ptr]
+	mov	rdx, [needle_len]
+
+	cmp	byte [rdi], 0
+	je	.notfound
+
+	call	strncmp
+	test	rax, rax
+	jz	.found
+
+	inc	qword [haystack_ptr]
+	inc	rbx
+
+	jmp	.loop
+
+.notfound:
+	pop	rbx
+	mov	rax, -1
+	ret
+
+.found: mov	rax, rbx
+	pop	rbx
+	ret
+	
 
 ; --- ATOI (char *s) ---
 
