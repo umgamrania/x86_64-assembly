@@ -1,5 +1,6 @@
 global	strlen
 global	strcmp
+global	strncmp
 global	strrev
 global	atoi
 global	itoa
@@ -41,6 +42,33 @@ strcmp:
 
 .end:	sub	al, cl			; subtract for difference
 	movzx	rax, al			; store return value in rax
+
+	ret
+
+
+; --- STRNCMP (char *s1, char *s2, int n) ---
+
+strncmp:
+
+.loop:	mov	al, byte [rdi]		; load character from s1
+	mov	cl, byte [rsi]		; load character from s2
+	
+	cmp	rdx, 0			; check if n is 0
+	je	.end
+
+	cmp	al, 0			; check for string terminator
+	je	.end			; break loop if end of string
+
+	cmp	al, cl			; compare characters
+	jne	.end			; break if not equal
+
+	inc	rdi
+	inc	rsi
+	dec	rdx
+	jmp	.loop
+
+.end:	sub	al, cl			; subtract for difference
+	movzx	rax, al			; store difference in rax
 
 	ret
 
