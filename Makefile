@@ -18,4 +18,5 @@ all: $(SHARED_OBJS) $(PROJECTS)
 
 .PHONY: clean all
 clean:
+	rm $(PROJECTS)
 	rm *.o
