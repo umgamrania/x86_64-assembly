@@ -78,27 +78,21 @@ strncmp:
 
 ; --- STRSTR (char *haystack, char *needle) ---
 
-section	.bss
-needle_len:	resq	1
-needle_ptr:	resq	1
-haystack_ptr:	resq	1
-
-section	.text
 strstr:	push	rbx			; preserve rbx
 
-	mov	[needle_ptr], rsi	; store needle ptr in memory
-	mov	[haystack_ptr], rdi	; store haystack in memory
+        push    rdi                     ; store haystack in memory
+        push    rsi                     ; store needle ptr in memory
 
 	mov	rdi, rsi		; load needle ptr to rdi
 	call	strlen
-	mov	[needle_len], rax	; store needle length
+	push	rax	                ; store needle length
 
 	mov	rbx, 0			; init counter
 	xor	rdi, rdi
 
-.loop:	mov	rdi, [haystack_ptr]     ; load current character
-	mov	rsi, [needle_ptr]
-	mov	rdx, [needle_len]       ; load needle length
+.loop:	mov	rdi, [rsp + 16]         ; load character at haystack ptr
+	mov	rsi, [rsp + 8]          ; load needle ptr
+	mov	rdx, [rsp]              ; load needle length
 
 	cmp	byte [rdi], 0           ; check for end of string
 	je	.notfound
@@ -107,17 +101,19 @@ strstr:	push	rbx			; preserve rbx
 	test	rax, rax                ; check if match
 	jz	.found
 
-	inc	qword [haystack_ptr]    ; increment haystack ptr
+	inc	qword [rsp + 16]        ; increment haystack ptr
 	inc	rbx                     ; increment counter
 
 	jmp	.loop
 
 .notfound:
+        add     rsp, 24                 ; collapse stack frame
 	pop	rbx                     ; restore rbx
 	mov	rax, -1                 ; return value
 	ret
 
-.found: mov	rax, rbx
+.found: add     rsp, 24                 ; collapse stack frame
+        mov	rax, rbx
 	pop	rbx
 	ret
 
