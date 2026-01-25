@@ -27,7 +27,7 @@ strlen:	mov	rcx, rdi		; store start addr in rcx
 ; --- STRCMP (char *s1, char *s2) ---
 
 strcmp:
-	
+
 .loop:	mov	al, byte [rdi]		; load character from s1
 	mov	cl, byte [rsi]		; load character from s2
 
@@ -57,7 +57,7 @@ strncmp:
 	je	.end
 
 	mov	al, byte [rdi]		; load character from s1
-	mov	cl, byte [rsi]		; load character from s2	
+	mov	cl, byte [rsi]		; load character from s2
 
 	cmp	al, 0			; check for string terminator
 	je	.end			; break loop if end of string
@@ -96,38 +96,38 @@ strstr:	push	rbx			; preserve rbx
 	mov	rbx, 0			; init counter
 	xor	rdi, rdi
 
-.loop:	mov	rdi, [haystack_ptr]
+.loop:	mov	rdi, [haystack_ptr]     ; load current character
 	mov	rsi, [needle_ptr]
-	mov	rdx, [needle_len]
+	mov	rdx, [needle_len]       ; load needle length
 
-	cmp	byte [rdi], 0
+	cmp	byte [rdi], 0           ; check for end of string
 	je	.notfound
 
-	call	strncmp
-	test	rax, rax
+	call	strncmp                 ; compare hay from current char and needle
+	test	rax, rax                ; check if match
 	jz	.found
 
-	inc	qword [haystack_ptr]
-	inc	rbx
+	inc	qword [haystack_ptr]    ; increment haystack ptr
+	inc	rbx                     ; increment counter
 
 	jmp	.loop
 
 .notfound:
-	pop	rbx
-	mov	rax, -1
+	pop	rbx                     ; restore rbx
+	mov	rax, -1                 ; return value
 	ret
 
 .found: mov	rax, rbx
 	pop	rbx
 	ret
-	
+
 
 ; --- ATOI (char *s) ---
 
 atoi:	push	rdi			; store start addr to later check for '-'
 
 	cmp	byte [rdi], '-'		; check if negative
-	jne	.positive	
+	jne	.positive
 	inc	rdi			; skip one char if negative
 
 .positive:
@@ -135,7 +135,7 @@ atoi:	push	rdi			; store start addr to later check for '-'
 	xor	rcx, rcx		; clear rcx
 
 .loop:	mov	cl, byte [rdi]		; load character
-	
+
 	cmp	cl, 0			; check for string terminator
 	je	.end_loop		; break loop of end of string
 
@@ -153,8 +153,8 @@ atoi:	push	rdi			; store start addr to later check for '-'
 	cmp	byte [rdi], '-'		; check if '-'
 	jne	.end
 
-	neg	rax	
-	
+	neg	rax
+
 .end:	ret
 
 
@@ -194,7 +194,7 @@ itoa:	push	rsi			; store buf addr to return
 	jge	.positive
 
 	mov	byte [rsi], '-'		; add - in buf if negative
-	inc	rsi			
+	inc	rsi
 	neg	rdi			; rest of the number can be treated as positive
 
 .positive:
@@ -205,7 +205,7 @@ itoa:	push	rsi			; store buf addr to return
 ; --- UITOA (int i, char *buf) ---
 
 uitoa:	push	rsi			; push buffer start address to stack
-	
+
 	mov	r9, 10			; base for division
 	mov	rax, rdi		; load number to rax for division
 
@@ -220,7 +220,7 @@ uitoa:	push	rsi			; push buffer start address to stack
 	jg	.loop
 
 .end:	mov	byte [rsi], 0		; add string terminator
-	
+
 	pop	rdi			; pop buffer start addr into rdi
 	call	strrev
 
