@@ -3,7 +3,7 @@ ASFLAGS=-felf64 -g -F dwarf
 LD=ld
 LDFLAGS=
 
-SHARED_FILES = functions.asm print.asm
+SHARED_FILES = functions.asm print.asm input.asm
 SHARED_OBJS = $(SHARED_FILES:.asm=.o)
 
 PROJECTS = arg-calc/calc file-io/read file-io/write fizz-buzz/fizz-buzz socket/socket-recv socket/socket-send process-clone-multithreading/clone
