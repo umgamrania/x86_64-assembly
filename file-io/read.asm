@@ -1,7 +1,7 @@
 global	_start
 
-extern	sprint
-extern	iprint
+extern	print_str
+extern	print_int
 
 section	.bss
 buf:	resb	8
@@ -55,13 +55,13 @@ _start:	mov	rax, [rsp]		; Load argc
 .notfound:
 	mov	rdi, notfound
 	mov	rsi, 1
-	call	sprint
+	call	print_str
 	jmp	.exit
 
 .show_usage:
 	mov	rdi, usage
 	mov	rsi, 1
-	call	sprint
+	call	print_str
 
 .exit:	mov	rdi, 0
 	mov	rax, 60

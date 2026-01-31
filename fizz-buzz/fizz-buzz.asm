@@ -1,7 +1,7 @@
 global	_start
 
-extern	sprint
-extern	iprint
+extern	print_str
+extern	print_int
 extern	atoi
 
 section	.data
@@ -31,17 +31,17 @@ _start:	mov	rax, [rsp]		; Load argc
 	mov	r12, 0
 	xor	rdx, rdx		; Clear rdx for division
 	mov	rax, rcx		; Load number in rax
-	
+
 	idiv	r13
 	cmp	rdx, 0
 	jne	.check_five
 
 	mov	r12, 1
-	
+
 	push	rcx			; preserve rcx
 	mov	rdi, fizz
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 	pop	rcx
 
 .check_five:
@@ -53,11 +53,11 @@ _start:	mov	rax, [rsp]		; Load argc
 	jne	.print_num
 
 	mov	r12, 1
-	
+
 	push	rcx
 	mov	rdi, buzz
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 	pop	rcx
 
 .print_num:
@@ -67,14 +67,14 @@ _start:	mov	rax, [rsp]		; Load argc
 	push	rcx
 	mov	rdi, rcx
 	mov	rsi, 0
-	call	iprint
+	call	print_int
 	pop	rcx
 
 .continue:
 	push	rcx
 	mov	rdi, nl
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 	pop	rcx
 
 	inc	rcx
@@ -83,7 +83,7 @@ _start:	mov	rax, [rsp]		; Load argc
 .show_usage:
 	mov	rdi, usage
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 
 .exit:	mov	rdi, 0
 	mov	rax, 60

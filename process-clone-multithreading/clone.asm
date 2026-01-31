@@ -1,7 +1,7 @@
 global  _start
 
-extern  iprint
-extern  sprint
+extern  print_int
+extern  print_str
 
 
 section .data
@@ -34,7 +34,7 @@ allocate_stack:
 print_loop:
 .loop:  mov     rdi, [rsp + 8]                  ; addr of string is 2nd from TOS, TOS is return addr
         mov     rsi, 0
-        call    sprint
+        call    print_str
         call    delay
         jmp     .loop
 

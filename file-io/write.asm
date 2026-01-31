@@ -1,7 +1,7 @@
 global	_start
 
 extern	strlen
-extern	sprint
+extern	print_str
 
 section	.data
 usage:		db	"USAGE: ./write [filename] [content]", 10, 0
@@ -36,13 +36,13 @@ _start:	mov	rax, [rsp]
 .failed:
 	mov	rdi, failed
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 	jmp	.exit
 
 .show_usage:
 	mov	rdi, usage
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 
 .exit:	mov	rdi, 0
 	mov	rax, 60

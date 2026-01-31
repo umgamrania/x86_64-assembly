@@ -1,8 +1,8 @@
 global	_start
 
 extern	atoi
-extern	sprint
-extern	iprint
+extern	print_str
+extern	print_int
 
 section	.data
 usage:		db	"USAGE: ./calc [operand 1] [operator] [operand 2]", 0
@@ -24,7 +24,7 @@ _start:	mov	rax, [rsp]		; Load argc
 
 	mov	rdi, [rsp + 4*8]	; parse operand 2
 	call	atoi			; operand 2 is now in rax
-	
+
 	mov	r10, rax
 	pop	rax			; restore operand 1 from stack
 
@@ -59,13 +59,13 @@ _start:	mov	rax, [rsp]		; Load argc
 .answer:
 	mov	rdi, rax
 	mov	rsi, 1
-	call	iprint
+	call	print_int
 	jmp	.exit
 
 .show_usage:
 	mov	rdi, usage
 	mov	rsi, 1
-	call	sprint
+	call	print_str
 
 .exit:	mov	rdi, 0
 	mov	rax, 60

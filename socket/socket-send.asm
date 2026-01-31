@@ -1,7 +1,7 @@
 global	_start
 
-extern	iprint
-extern	sprint
+extern	print_int
+extern	print_str
 
 section	.bss
 sock_fd:	resq		1
@@ -20,30 +20,30 @@ msg_enter:	db		"Enter message: ", 0
 
 text_client:	db		"Client: ", 0
 sockaddr:
-	dw	2		; AF_INET
-	dw	0x901F		; port (8080)
-	db	127, 0, 0, 1	; 127.0.0.1
+	dw	2		                ; AF_INET
+	dw	0x901F		                ; port (8080)
+	db	127, 0, 0, 1	                ; 127.0.0.1
 
 section	.text
 
-_start:	
+_start:
 	; CREATE SOCKET
 
-	mov	rdi, 2		; AF_INET
-	mov	rsi, 1		; SOCK_STREAM
-	mov	rdx, 6		; IPPROTO_TCP
-	mov	rax, 41		; socket opcode
+	mov	rdi, 2		                ; AF_INET
+	mov	rsi, 1		                ; SOCK_STREAM
+	mov	rdx, 6		                ; IPPROTO_TCP
+	mov	rax, 41		                ; socket opcode
 	syscall
 
 	cmp	rax, 0
 	jl	.failed
 
-	mov	[sock_fd], rax	; store socket fd in variable
+	mov	[sock_fd], rax	                ; store socket fd in variable
 
 	; SETSOCKOPT SO_REUSEADDR
 	mov	rdi, [sock_fd]
-	mov	rsi, 1		; level, SOL_SOCKET
-	mov	rdx, 2		; SO_REUSEADDR
+	mov	rsi, 1		                ; level, SOL_SOCKET
+	mov	rdx, 2		                ; SO_REUSEADDR
 	push	dword 1
 	mov	r10, rsp
 	mov	r8, 4
@@ -53,9 +53,9 @@ _start:
 	; BIND
 
 	mov	rdi, [sock_fd]
-	mov	rsi, sockaddr	; sockaddr struct
-	mov	rdx, 16		; length of sockaddr
-	mov	rax, 49		; bind opcode
+	mov	rsi, sockaddr	                ; sockaddr struct
+	mov	rdx, 16		                ; length of sockaddr
+	mov	rax, 49		                ; bind opcode
 	syscall
 
 	cmp	rax, 0
@@ -64,35 +64,35 @@ _start:
 	; LISTEN
 
 	mov	rdi, [sock_fd]
-	mov	rsi, 5		; backlog
-	mov	rax, 50		; listen opcode
+	mov	rsi, 5		                ; backlog
+	mov	rax, 50		                ; listen opcode
 	syscall
 
 
 	mov	rdi, msg_wait_client
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 
 	; ACCEPT
 
 	mov	rdi, [sock_fd]
-	mov	rsi, 0		; remote addr not required
-	mov	rdx, 0		; 0 since remote addr is 0
-	mov	rax, 43		; accept opcode
+	mov	rsi, 0		                ; remote addr not required
+	mov	rdx, 0		                ; 0 since remote addr is 0
+	mov	rax, 43		                ; accept opcode
 	syscall
 
-	mov	[client_fd], rax	; store client socket fd
+	mov	[client_fd], rax	        ; store client socket fd
 
 	mov	rdi, msg_client_connected
 	mov	rsi, 0
-	call	sprint
-	
+	call	print_str
+
 .loop:	mov	rdi, msg_enter
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 
 	; READ INPUT
-	mov	rdi, 0			; stdin
+	mov	rdi, 0			        ; stdin
 	mov	rsi, buf
 	mov	rdx, 128
 	mov	rax, 0
@@ -112,13 +112,13 @@ _start:
 .fail_bind:
 	mov	rdi, fail_bind
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 	jmp	.exit
 
 .failed:
 	mov	rdi, failed
 	mov	rsi, 0
-	call	sprint
+	call	print_str
 
 .exit:	mov	rdi, 0
 	mov	rax, 60

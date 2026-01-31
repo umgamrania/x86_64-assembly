@@ -1,19 +1,20 @@
-global	sprint
-global	iprint
-global	uiprint
+global	print_str
+global	print_int
+global	print_uint
 
 extern	itoa
 extern	uitoa
 extern	strlen
 
 section	.bss
-iprintbuf:	resb	32
+print_int_buf:	resb	32
 
 section	.text
 
-; --- SPRINT (char *s, bool new_line) ---
+; --- PRINT_STR (char *s, bool new_line) ---
 
-sprint:	push	rsi			; push rsi for later use
+print_str:
+        push	rsi			; push rsi for later use
 	push	rdi			; push *s before strlen
 	call	strlen
 	pop	rdi
@@ -40,30 +41,31 @@ sprint:	push	rsi			; push rsi for later use
 .end:	ret
 
 
-; --- IPRINT (int i, bool new_line) ---
+; --- PRINT_INT (int i, bool new_line) ---
 
-iprint:	push	rsi			; push rsi for later use
-	
-	mov	rsi, iprintbuf		; convert int to ascii and store in buf
+print_int:
+        push	rsi			; push rsi for later use
+
+	mov	rsi, print_int_buf	; convert int to ascii and store in buf
 	call	itoa
-	
+
 	pop	rsi			; restore new_line value
-	mov	rdi, iprintbuf		; print converted buf
-	call	sprint
+	mov	rdi, print_int_buf	; print converted buf
+	call	print_str
 
 	ret
 
 
-; --- UIPRINT (int i, bool new_line) ---
+; --- print_uint (int i, bool new_line) ---
 
-uiprint:
+print_uint:
 	push	rsi			; push rsi for later use
-	
-	mov	rsi, iprintbuf		; convert int to string in buf
+
+	mov	rsi, print_int_buf	; convert int to string in buf
 	call	uitoa
 
 	pop	rsi
-	mov	rdi, iprintbuf
-	call	sprint
+	mov	rdi, print_int_buf
+	call	print_str
 
 	ret
