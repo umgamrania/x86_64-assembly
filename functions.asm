@@ -132,6 +132,9 @@ atoi:	push	rdi			; store start addr to later check for '-'
 
 .loop:	mov	cl, byte [rdi]		; load character
 
+        cmp     cl, 10                  ; check for new line
+        je      .end_loop
+
 	cmp	cl, 0			; check for string terminator
 	je	.end_loop		; break loop of end of string
 
